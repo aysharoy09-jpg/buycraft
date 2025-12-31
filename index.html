@@ -269,6 +269,21 @@ function toggleLang(){
 }
 </script>
 
+ function loadOrders(){
+ let box=document.getElementById("orderList");
+ let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+ box.innerHTML="";
+ orders.forEach(o=>{
+  box.innerHTML+=`
+   <div class="card">
+    <b>Total:</b> ₹${o.total}<br>
+    <b>Payment:</b> ${o.payment}<br>
+    <b>Status:</b> ${o.status}<br>
+    <small>${o.time}</small>
+   </div>`;
+ });
+}
+
 <!-- PAYMENT -->
 <div id="payment" class="hidden">
  <div class="card">
@@ -288,6 +303,9 @@ function toggleLang(){
   <button class="buy" onclick="goHome()">Continue Shopping</button>
  </div>
 </div>
+
+
+ <button onclick="show('orders')">📦 Orders</button>
 
 </body>
 </html>
