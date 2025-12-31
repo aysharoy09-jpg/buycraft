@@ -132,6 +132,38 @@ function del(i){
  localStorage.setItem("products",JSON.stringify(items));
  loadProducts();
 }
+
+
+ <div class="card">
+ <h3>All Orders</h3>
+ <div id="orders"></div>
+</div>
+function loadOrders(){
+ let box=document.getElementById("orders");
+ let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+ box.innerHTML="";
+ orders.forEach((o,i)=>{
+  box.innerHTML+=`
+   <div class="product">
+    ₹${o.total} – ${o.payment}<br>
+    Status:
+    <select onchange="setStatus(${i},this.value)">
+     <option ${o.status=="Placed"?"selected":""}>Placed</option>
+     <option ${o.status=="Packed"?"selected":""}>Packed</option>
+     <option ${o.status=="Shipped"?"selected":""}>Shipped</option>
+     <option ${o.status=="Delivered"?"selected":""}>Delivered</option>
+    </select>
+   </div>`;
+ });
+}
+
+function setStatus(i,s){
+ let orders=JSON.parse(localStorage.getItem("orders"));
+ orders[i].status=s;
+ localStorage.setItem("orders",JSON.stringify(orders));
+ loadOrders();
+}
+
 </script>
 
 </body>
