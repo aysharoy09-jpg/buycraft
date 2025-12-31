@@ -5,76 +5,161 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuyCraft</title>
 
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2874F0">
 
 <style>
-:root {
-  --primary:#2874F0;
-  --dark:#121212;
+:root{
+ --primary:#2874F0;
+ --bg:#f4f6f8;
+ --dark:#121212;
 }
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f4f6f8;
+body{
+ margin:0;
+ font-family:Arial, sans-serif;
+ background:var(--bg);
 }
-header {
-  background:var(--primary);
-  color:#fff;
-  padding:15px;
-  font-size:20px;
-  display:flex;
-  justify-content:space-between;
+header{
+ background:var(--primary);
+ color:#fff;
+ padding:12px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
 }
-.card {
-  background:#fff;
-  margin:12px;
-  padding:12px;
-  border-radius:10px;
+header span{
+ font-size:18px;
 }
-button {
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
+button{
+ background:var(--primary);
+ color:#fff;
+ border:none;
+ padding:6px 10px;
+ border-radius:6px;
 }
-.dark body {
-  background:var(--dark);
-  color:#fff;
+.card{
+ background:#fff;
+ margin:10px;
+ padding:12px;
+ border-radius:10px;
 }
+.nav{
+ position:fixed;
+ bottom:0;
+ width:100%;
+ background:#fff;
+ display:flex;
+ justify-content:space-around;
+ padding:8px 0;
+}
+.nav button{
+ background:none;
+ color:#333;
+}
+.hidden{display:none;}
+.dark{
+ background:var(--dark);
+ color:#fff;
+}
+.dark .card{background:#1f1f1f;}
 </style>
 </head>
 
-<body>
+<body id="app">
 
 <header>
-  <div>BuyCraft</div>
-  <button onclick="toggleLang()">🌐</button>
+ <span>BuyCraft</span>
+ <div>
+   <button onclick="toggleLang()">🌐</button>
+   <button onclick="toggleDark()">🌙</button>
+ </div>
 </header>
 
-<div class="card">
-  <h3 id="title1">Big Deals</h3>
-  <p>Smartphone – ₹14,999</p>
-  <button>Add to Cart</button>
+<!-- HOME -->
+<div id="home">
+ <div class="card">
+   <h3 id="deal">Big Deals</h3>
+   <p>Smartphone – ₹14999</p>
+   <button onclick="addCart('Smartphone',14999)">Add to Cart</button>
+ </div>
+ <div class="card">
+   <p>Shoes – ₹2499</p>
+   <button onclick="addCart('Shoes',2499)">Add to Cart</button>
+ </div>
 </div>
 
-<div class="card">
-  <p>Shoes – ₹2,499</p>
-  <button>Add to Cart</button>
+<!-- CART -->
+<div id="cart" class="hidden">
+ <div class="card">
+   <h3>My Cart</h3>
+   <ul id="cartList"></ul>
+   <p><b>Total: ₹<span id="total">0</span></b></p>
+   <button onclick="checkout()">Checkout</button>
+ </div>
 </div>
 
-<footer class="card" style="text-align:center">
-  BuyCraft © 2025<br>
-  Developed for Adi
+<!-- CHECKOUT -->
+<div id="checkout" class="hidden">
+ <div class="card">
+   <h3>Order Confirmed 🎉</h3>
+   <p>Payment: Cash on Delivery</p>
+   <button onclick="goHome()">Continue Shopping</button>
+ </div>
+</div>
+
+<footer class="card" style="text-align:center;margin-bottom:70px">
+ BuyCraft © 2025<br>Owner: Adi
 </footer>
 
+<!-- NAV -->
+<div class="nav">
+ <button onclick="show('home')">🏠 Home</button>
+ <button onclick="show('cart')">🛒 Cart (<span id="count">0</span>)</button>
+</div>
+
 <script>
-let lang = "en";
+let cart=[];
+let lang="en";
+function addCart(name,price){
+ cart.push({name,price});
+ updateCart();
+}
+function updateCart(){
+ let list=document.getElementById("cartList");
+ list.innerHTML="";
+ let total=0;
+ cart.forEach((i,idx)=>{
+  total+=i.price;
+  list.innerHTML+=`<li>${i.name} - ₹${i.price}
+  <button onclick="remove(${idx})">❌</button></li>`;
+ });
+ document.getElementById("total").innerText=total;
+ document.getElementById("count").innerText=cart.length;
+}
+function remove(i){
+ cart.splice(i,1);
+ updateCart();
+}
+function show(id){
+ ["home","cart","checkout"].forEach(x=>{
+  document.getElementById(x).classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
+}
+function checkout(){
+ show("checkout");
+ cart=[];
+ updateCart();
+}
+function goHome(){
+ show("home");
+}
+function toggleDark(){
+ document.getElementById("app").classList.toggle("dark");
+}
 function toggleLang(){
-  lang = lang === "en" ? "hi" : "en";
-  document.getElementById("title1").innerText =
-    lang === "en" ? "Big Deals" : "बड़े ऑफर";
+ lang = lang==="en"?"hi":"en";
+ document.getElementById("deal").innerText =
+  lang==="en"?"Big Deals":"बड़े ऑफर";
 }
 </script>
 
