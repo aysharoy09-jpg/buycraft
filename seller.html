@@ -124,6 +124,40 @@ function load(){
  });
 }
 
+ <div class="card">
+ <h3>My Orders</h3>
+ <div id="orders"></div>
+</div>
+function loadOrders(){
+ let box=document.getElementById("orders");
+ let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+ box.innerHTML="";
+ orders.forEach((o,i)=>{
+  o.items.forEach(it=>{
+   if(it.s===sellerKey.replace("seller_","")){
+    box.innerHTML+=`
+     <div class="product">
+      ${it.n} – ₹${it.p}<br>
+      Status:
+      <select onchange="setStatus(${i},this.value)">
+       <option ${o.status=="Placed"?"selected":""}>Placed</option>
+       <option ${o.status=="Packed"?"selected":""}>Packed</option>
+       <option ${o.status=="Shipped"?"selected":""}>Shipped</option>
+      </select>
+     </div>`;
+   }
+  });
+ });
+}
+
+function setStatus(i,s){
+ let orders=JSON.parse(localStorage.getItem("orders"));
+ orders[i].status=s;
+ localStorage.setItem("orders",JSON.stringify(orders));
+ loadOrders();
+}
+
+
 function del(i){
  let mine=JSON.parse(localStorage.getItem(sellerKey));
  let all=JSON.parse(localStorage.getItem("products"));
