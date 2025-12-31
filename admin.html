@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuyCraft Admin</title>
+
+<style>
+body{
+ font-family:Arial, sans-serif;
+ background:#f1f3f6;
+ margin:0;
+}
+header{
+ background:#2874F0;
+ color:#fff;
+ padding:14px;
+ font-size:18px;
+ text-align:center;
+}
+.card{
+ background:#fff;
+ margin:12px;
+ padding:12px;
+ border-radius:12px;
+}
+input,button{
+ width:100%;
+ padding:10px;
+ margin-top:8px;
+ border-radius:8px;
+ border:1px solid #ccc;
+}
+button{
+ background:#2874F0;
+ color:#fff;
+ border:none;
+ font-weight:bold;
+}
+.hidden{display:none;}
+.product{
+ display:flex;
+ justify-content:space-between;
+ margin-top:8px;
+}
+.product button{
+ width:auto;
+ padding:6px;
+ background:#ff5252;
+}
+</style>
+</head>
+
+<body>
+
+<header>BuyCraft Admin Panel</header>
+
+<!-- LOGIN -->
+<div id="login" class="card">
+ <h3>Admin Login</h3>
+ <input type="password" id="pin" placeholder="Enter Admin PIN">
+ <button onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+ <div class="card">
+  <h3>Home Banner Text</h3>
+  <input id="banner" placeholder="Big Festive Deals">
+  <button onclick="saveBanner()">Save Banner</button>
+ </div>
+
+ <div class="card">
+  <h3>Add Product</h3>
+  <input id="pname" placeholder="Product Name">
+  <input id="pprice" placeholder="Price">
+  <button onclick="addProduct()">Add Product</button>
+ </div>
+
+ <div class="card">
+  <h3>Product List</h3>
+  <div id="plist"></div>
+ </div>
+
+</div>
+
+<script>
+const ADMIN_PIN="1234";
+
+function login(){
+ if(document.getElementById("pin").value===ADMIN_PIN){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  loadProducts();
+ }
+ else alert("Wrong PIN");
+}
+
+function saveBanner(){
+ localStorage.setItem("banner",document.getElementById("banner").value);
+ alert("Banner saved");
+}
+
+function addProduct(){
+ let n=document.getElementById("pname").value;
+ let p=document.getElementById("pprice").value;
+ let items=JSON.parse(localStorage.getItem("products")||"[]");
+ items.push({n,p});
+ localStorage.setItem("products",JSON.stringify(items));
+ loadProducts();
+}
+
+function loadProducts(){
+ let list=document.getElementById("plist");
+ list.innerHTML="";
+ let items=JSON.parse(localStorage.getItem("products")||"[]");
+ items.forEach((i,x)=>{
+  list.innerHTML+=`
+   <div class="product">
+    ${i.n} – ₹${i.p}
+    <button onclick="del(${x})">❌</button>
+   </div>`;
+ });
+ document.getElementById("banner").value=
+  localStorage.getItem("banner")||"";
+}
+
+function del(i){
+ let items=JSON.parse(localStorage.getItem("products"));
+ items.splice(i,1);
+ localStorage.setItem("products",JSON.stringify(items));
+ loadProducts();
+}
+</script>
+
+</body>
+</html>
