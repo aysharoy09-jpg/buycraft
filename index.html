@@ -176,12 +176,16 @@ button.buy{
 <script>
 let cart=[];
 let lang="en";
+let wallet=5000; // demo wallet balance
+
 function addCart(n,p){
  cart.push({n,p});
  updateCart();
 }
+
 function updateCart(){
  let l=document.getElementById("cartList");
+ if(!l) return;
  l.innerHTML="";
  let t=0;
  cart.forEach((i,x)=>{
@@ -192,22 +196,89 @@ function updateCart(){
  document.getElementById("total").innerText=t;
  document.getElementById("count").innerText=cart.length;
 }
+
 function remove(i){cart.splice(i,1);updateCart();}
+
 function show(id){
- ["home","cart","checkout"].forEach(x=>{
-  document.getElementById(x).classList.add("hidden");
+ ["home","cart","checkout","payment","success"].forEach(x=>{
+  let e=document.getElementById(x);
+  if(e) e.classList.add("hidden");
  });
  document.getElementById(id).classList.remove("hidden");
 }
-function checkout(){show("checkout");cart=[];updateCart();}
-function goHome(){show("home");}
-function toggleDark(){document.getElementById("app").classList.toggle("dark");}
+
+function checkout(){
+ show("payment");
+}
+
+function payCOD(){
+ saveOrder("Cash on Delivery","Pending");
+}
+
+function payUPI(app){
+ saveOrder("UPI ("+app+")","Paid");
+}
+
+function payWallet(){
+ let total=getTotal();
+ if(wallet<total) return alert("Insufficient Wallet Balance");
+ wallet-=total;
+ saveOrder("Wallet","Paid");
+}
+
+function getTotal(){
+ return cart.reduce((a,b)=>a+b.p,0);
+}
+
+function saveOrder(method,status){
+ let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+ orders.push({
+  items:cart,
+  total:getTotal(),
+  payment:method,
+  status:status,
+  time:new Date().toLocaleString()
+ });
+ localStorage.setItem("orders",JSON.stringify(orders));
+ cart=[];
+ updateCart();
+ show("success");
+}
+
+function goHome(){
+ show("home");
+}
+
+function toggleDark(){
+ document.getElementById("app").classList.toggle("dark");
+}
+
 function toggleLang(){
  lang=lang==="en"?"hi":"en";
  document.getElementById("deal").innerText=
  lang==="en"?"Big Festive Deals":"बड़े त्योहार ऑफर";
 }
 </script>
+
+<!-- PAYMENT -->
+<div id="payment" class="hidden">
+ <div class="card">
+  <h3>Select Payment Method</h3>
+  <button class="buy" onclick="payCOD()">💵 Cash on Delivery</button><br><br>
+  <button class="buy" onclick="payUPI('Google Pay')">🟣 Google Pay (Demo)</button><br><br>
+  <button class="buy" onclick="payUPI('PhonePe')">🟪 PhonePe (Demo)</button><br><br>
+  <button class="buy" onclick="payWallet()">🔵 BuyCraft Wallet (₹5000)</button>
+ </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success" class="hidden">
+ <div class="card" style="text-align:center">
+  <h2>Order Placed 🎉</h2>
+  <p>Thank you for shopping with BuyCraft</p>
+  <button class="buy" onclick="goHome()">Continue Shopping</button>
+ </div>
+</div>
 
 </body>
 </html>
