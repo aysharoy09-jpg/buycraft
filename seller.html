@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuyCraft Seller Panel</title>
+
+<style>
+body{
+ font-family:Arial, sans-serif;
+ background:#f1f3f6;
+ margin:0;
+}
+header{
+ background:#2874F0;
+ color:#fff;
+ padding:14px;
+ font-size:18px;
+ text-align:center;
+}
+.card{
+ background:#fff;
+ margin:12px;
+ padding:12px;
+ border-radius:12px;
+}
+input,button{
+ width:100%;
+ padding:10px;
+ margin-top:8px;
+ border-radius:8px;
+ border:1px solid #ccc;
+}
+button{
+ background:#2874F0;
+ color:#fff;
+ border:none;
+ font-weight:bold;
+}
+.hidden{display:none;}
+.product{
+ display:flex;
+ justify-content:space-between;
+ margin-top:8px;
+}
+.product button{
+ width:auto;
+ padding:6px;
+ background:#ff5252;
+}
+.small{
+ font-size:12px;
+ color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<header>BuyCraft Seller Panel</header>
+
+<!-- LOGIN -->
+<div id="login" class="card">
+ <h3>Seller Login</h3>
+ <input id="seller" placeholder="Seller Name">
+ <input type="password" id="pin" placeholder="PIN (any)">
+ <button onclick="login()">Login</button>
+ <p class="small">Each seller has separate products</p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash" class="hidden">
+
+ <div class="card">
+  <h3>Add Product</h3>
+  <input id="pname" placeholder="Product Name">
+  <input id="pprice" placeholder="Price">
+  <button onclick="addProduct()">Add Product</button>
+ </div>
+
+ <div class="card">
+  <h3>My Products</h3>
+  <div id="plist"></div>
+ </div>
+
+</div>
+
+<script>
+let sellerKey="";
+
+function login(){
+ let s=document.getElementById("seller").value.trim();
+ if(!s) return alert("Enter seller name");
+ sellerKey="seller_"+s;
+ document.getElementById("login").classList.add("hidden");
+ document.getElementById("dash").classList.remove("hidden");
+ load();
+}
+
+function addProduct(){
+ let n=document.getElementById("pname").value;
+ let p=document.getElementById("pprice").value;
+ if(!n||!p) return;
+ let all=JSON.parse(localStorage.getItem("products")||"[]");
+ let mine=JSON.parse(localStorage.getItem(sellerKey)||"[]");
+ let item={n,p,s:sellerKey.replace("seller_","")};
+ mine.push(item);
+ all.push(item);
+ localStorage.setItem(sellerKey,JSON.stringify(mine));
+ localStorage.setItem("products",JSON.stringify(all));
+ load();
+}
+
+function load(){
+ let mine=JSON.parse(localStorage.getItem(sellerKey)||"[]");
+ let box=document.getElementById("plist");
+ box.innerHTML="";
+ mine.forEach((i,x)=>{
+  box.innerHTML+=`
+   <div class="product">
+    ${i.n} – ₹${i.p}
+    <button onclick="del(${x})">❌</button>
+   </div>`;
+ });
+}
+
+function del(i){
+ let mine=JSON.parse(localStorage.getItem(sellerKey));
+ let all=JSON.parse(localStorage.getItem("products"));
+ let item=mine[i];
+ mine.splice(i,1);
+ all=all.filter(x=>!(x.n===item.n && x.s===item.s));
+ localStorage.setItem(sellerKey,JSON.stringify(mine));
+ localStorage.setItem("products",JSON.stringify(all));
+ load();
+}
+</script>
+
+</body>
+</html>
