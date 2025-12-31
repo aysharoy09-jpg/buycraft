@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuyCraft</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2874F0">
+
+<style>
+:root {
+  --primary:#2874F0;
+  --dark:#121212;
+}
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+}
+header {
+  background:var(--primary);
+  color:#fff;
+  padding:15px;
+  font-size:20px;
+  display:flex;
+  justify-content:space-between;
+}
+.card {
+  background:#fff;
+  margin:12px;
+  padding:12px;
+  border-radius:10px;
+}
+button {
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+}
+.dark body {
+  background:var(--dark);
+  color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>BuyCraft</div>
+  <button onclick="toggleLang()">🌐</button>
+</header>
+
+<div class="card">
+  <h3 id="title1">Big Deals</h3>
+  <p>Smartphone – ₹14,999</p>
+  <button>Add to Cart</button>
+</div>
+
+<div class="card">
+  <p>Shoes – ₹2,499</p>
+  <button>Add to Cart</button>
+</div>
+
+<footer class="card" style="text-align:center">
+  BuyCraft © 2025<br>
+  Developed for Adi
+</footer>
+
+<script>
+let lang = "en";
+function toggleLang(){
+  lang = lang === "en" ? "hi" : "en";
+  document.getElementById("title1").innerText =
+    lang === "en" ? "Big Deals" : "बड़े ऑफर";
+}
+</script>
+
+</body>
+</html>
